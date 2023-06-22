@@ -32,18 +32,18 @@ public delegate Object BuiltinFunction(params Object[] arguments);
 
 public class Error : Object
 {
-    public readonly string Message;
+    private readonly string _message;
 
     public Error(string message)
     {
-        Message = message;
+        _message = message;
     }
 
     public override ObjectType Type => ObjectType.Error;
 
     public override string Inspect()
     {
-        return $"Error: {Message}";
+        return $"Error: {_message}";
     }
 }
 
@@ -92,11 +92,11 @@ public class Integer : Object, IHashable
 
 public class Boolean : Object, IHashable
 {
-    public readonly bool Value;
+    private readonly bool _value;
 
     public Boolean(bool value)
     {
-        Value = value;
+        _value = value;
     }
 
     public override ObjectType Type => ObjectType.Boolean;
@@ -105,14 +105,14 @@ public class Boolean : Object, IHashable
 
     public HashKey HashKey()
     {
-        return new HashKey(Type, (ulong)(Value ? 1 : 0));
+        return new HashKey(Type, (ulong)(_value ? 1 : 0));
     }
 
     #endregion
 
     public override string Inspect()
     {
-        return $"{Value}";
+        return $"{_value}";
     }
 }
 
@@ -168,13 +168,13 @@ public class Array : Object
 
 public class HashKey
 {
-    public readonly ObjectType Type;
-    public readonly ulong Value;
+    private readonly ObjectType _type;
+    private readonly ulong _value;
 
     public HashKey(ObjectType type, ulong value)
     {
-        Type = type;
-        Value = value;
+        _type = type;
+        _value = value;
     }
 
     public override bool Equals(object? obj)
@@ -182,12 +182,12 @@ public class HashKey
         if (obj == null || GetType() != obj.GetType()) return false;
 
         var other = (obj as HashKey)!;
-        return Type == other.Type && Value == other.Value;
+        return _type == other._type && _value == other._value;
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine((int)Type, Value);
+        return HashCode.Combine((int)_type, _value);
     }
 }
 
