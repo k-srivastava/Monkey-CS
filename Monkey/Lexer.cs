@@ -37,27 +37,27 @@ public class Lexer
             }
 
             case '+':
-                token = new Token(TokenType.Plus, "+");
+                token = GenerateTokenAtCurrent(TokenType.Plus);
                 break;
 
             case '-':
-                token = new Token(TokenType.Minus, "-");
+                token = GenerateTokenAtCurrent(TokenType.Minus);
                 break;
 
             case '*':
-                token = new Token(TokenType.Asterisk, "*");
+                token = GenerateTokenAtCurrent(TokenType.Asterisk);
                 break;
 
             case '/':
-                token = new Token(TokenType.Slash, "/");
+                token = GenerateTokenAtCurrent(TokenType.Slash);
                 break;
 
             case '<':
-                token = new Token(TokenType.LesserThan, "<");
+                token = GenerateTokenAtCurrent(TokenType.LesserThan);
                 break;
 
             case '>':
-                token = new Token(TokenType.GreaterThan, ">");
+                token = GenerateTokenAtCurrent(TokenType.GreaterThan);
                 break;
 
             case '!':
@@ -80,39 +80,39 @@ public class Lexer
                 break;
 
             case ',':
-                token = new Token(TokenType.Comma, ",");
+                token = GenerateTokenAtCurrent(TokenType.Comma);
                 break;
 
             case ':':
-                token = new Token(TokenType.Colon, ":");
+                token = GenerateTokenAtCurrent(TokenType.Colon);
                 break;
 
             case ';':
-                token = new Token(TokenType.Semicolon, ";");
+                token = GenerateTokenAtCurrent(TokenType.Semicolon);
                 break;
 
             case '(':
-                token = new Token(TokenType.LeftParenthesis, "(");
+                token = GenerateTokenAtCurrent(TokenType.LeftParenthesis);
                 break;
 
             case ')':
-                token = new Token(TokenType.RightParenthesis, ")");
+                token = GenerateTokenAtCurrent(TokenType.RightParenthesis);
                 break;
 
             case '{':
-                token = new Token(TokenType.LeftBrace, "{");
+                token = GenerateTokenAtCurrent(TokenType.LeftBrace);
                 break;
 
             case '}':
-                token = new Token(TokenType.RightBrace, "}");
+                token = GenerateTokenAtCurrent(TokenType.RightBrace);
                 break;
 
             case '[':
-                token = new Token(TokenType.LeftBracket, "[");
+                token = GenerateTokenAtCurrent(TokenType.LeftBracket);
                 break;
 
             case ']':
-                token = new Token(TokenType.RightBracket, "]");
+                token = GenerateTokenAtCurrent(TokenType.RightBracket);
                 break;
 
             case '\0':
@@ -185,5 +185,10 @@ public class Lexer
     private char PeekCharacter()
     {
         return _readPosition >= _input.Length ? '\0' : _input[_readPosition];
+    }
+
+    private Token GenerateTokenAtCurrent(TokenType tokenType)
+    {
+        return new Token(tokenType, _character.ToString());
     }
 }
