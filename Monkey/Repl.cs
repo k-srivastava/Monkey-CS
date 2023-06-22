@@ -4,7 +4,14 @@ public static class Repl
 {
     private const string Prompt = ">> ";
 
-    private const string MonkeyFace = "MONKEY!!!";
+    private const string MonkeyFace = @"         .-""-.
+       _/_-.-_\_
+      / __> <__ \
+     / //  ""  \\ \
+    / / \'---'/ \ \
+    \ \_/`""""""`\_/ /
+     \           /
+";
 
     public static void Start()
     {
