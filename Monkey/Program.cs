@@ -1,5 +1,4 @@
-﻿
-using Monkey;
+﻿using Monkey;
 using Environment = System.Environment;
 
 string username = Environment.UserName;

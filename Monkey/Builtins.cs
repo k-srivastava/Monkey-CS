@@ -2,6 +2,16 @@
 
 public static class Builtins
 {
+    public static readonly Dictionary<string, Builtin> BuiltinsMap = new()
+    {
+        { "puts", new Builtin(PutsFunction) },
+        { "len", new Builtin(LenFunction) },
+        { "first", new Builtin(FirstFunction) },
+        { "last", new Builtin(LastFunction) },
+        { "rest", new Builtin(RestFunction) },
+        { "push", new Builtin(PushFunction) }
+    };
+
     private static Object PutsFunction(params Object[] arguments)
     {
         foreach (Object @object in arguments) Console.WriteLine(@object.Inspect());
@@ -82,14 +92,4 @@ public static class Builtins
 
         return new Array(newElements);
     }
-
-    public static readonly Dictionary<string, Builtin> BuiltinsMap = new()
-    {
-        { "puts", new Builtin(PutsFunction) },
-        { "len", new Builtin(LenFunction) },
-        { "first", new Builtin(FirstFunction) },
-        { "last", new Builtin(LastFunction) },
-        { "rest", new Builtin(RestFunction) },
-        { "push", new Builtin(PushFunction) }
-    };
 }

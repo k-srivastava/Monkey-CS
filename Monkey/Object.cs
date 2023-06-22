@@ -75,10 +75,14 @@ public class Integer : Object, IHashable
 
     public override ObjectType Type => ObjectType.Integer;
 
+    #region IHashable Members
+
     public HashKey HashKey()
     {
         return new HashKey(Type, (ulong)Value);
     }
+
+    #endregion
 
     public override string Inspect()
     {
@@ -97,10 +101,14 @@ public class Boolean : Object, IHashable
 
     public override ObjectType Type => ObjectType.Boolean;
 
+    #region IHashable Members
+
     public HashKey HashKey()
     {
         return new HashKey(Type, (ulong)(Value ? 1 : 0));
     }
+
+    #endregion
 
     public override string Inspect()
     {
@@ -119,6 +127,8 @@ public class String : Object, IHashable
 
     public override ObjectType Type => ObjectType.String;
 
+    #region IHashable Members
+
     public HashKey HashKey()
     {
         using var algorithm = HashAlgorithm.Create("SHA512")!;
@@ -129,6 +139,8 @@ public class String : Object, IHashable
 
         return new HashKey(Type, hashValue);
     }
+
+    #endregion
 
     public override string Inspect()
     {
