@@ -6,17 +6,11 @@ public abstract class Node
     public abstract override string ToString();
 }
 
-public abstract class Statement : Node
-{
-    public abstract void StatementNode();
-}
+public abstract class Statement : Node { }
 
-public abstract class Expression : Node
-{
-    public abstract void ExpressionNode();
-}
+public abstract class Expression : Node { }
 
-public class LetStatement : Statement
+public sealed class LetStatement : Statement
 {
     public readonly Identifier Name;
     public readonly Expression? Value;
@@ -30,8 +24,6 @@ public class LetStatement : Statement
 
     public override Token Token { get; }
 
-    public override void StatementNode() { }
-
     public override string ToString()
     {
         var output = $"{Token.Literal} {Name}";
@@ -42,7 +34,7 @@ public class LetStatement : Statement
     }
 }
 
-public class ReturnStatement : Statement
+public sealed class ReturnStatement : Statement
 {
     public readonly Expression? Value;
 
@@ -54,8 +46,6 @@ public class ReturnStatement : Statement
 
     public override Token Token { get; }
 
-    public override void StatementNode() { }
-
     public override string ToString()
     {
         string output = Token.Literal;
@@ -66,7 +56,7 @@ public class ReturnStatement : Statement
     }
 }
 
-public class ExpressionStatement : Statement
+public sealed class ExpressionStatement : Statement
 {
     public readonly Expression? Expression;
 
@@ -78,15 +68,13 @@ public class ExpressionStatement : Statement
 
     public override Token Token { get; }
 
-    public override void StatementNode() { }
-
     public override string ToString()
     {
         return Expression != null ? Expression.ToString() : string.Empty;
     }
 }
 
-public class BlockStatement : Statement
+public sealed class BlockStatement : Statement
 {
     public readonly Statement[] Statements;
 
@@ -98,15 +86,13 @@ public class BlockStatement : Statement
 
     public override Token Token { get; }
 
-    public override void StatementNode() { }
-
     public override string ToString()
     {
         return Statements.Aggregate(string.Empty, (current, statement) => current + statement);
     }
 }
 
-public class Identifier : Expression
+public sealed class Identifier : Expression
 {
     public readonly string Value;
 
@@ -118,15 +104,13 @@ public class Identifier : Expression
 
     public override Token Token { get; }
 
-    public override void ExpressionNode() { }
-
     public override string ToString()
     {
         return Value;
     }
 }
 
-public class IntegerLiteral : Expression
+public sealed class IntegerLiteral : Expression
 {
     public readonly long Value;
 
@@ -138,15 +122,13 @@ public class IntegerLiteral : Expression
 
     public override Token Token { get; }
 
-    public override void ExpressionNode() { }
-
     public override string ToString()
     {
         return Token.Literal;
     }
 }
 
-public class BooleanLiteral : Expression
+public sealed class BooleanLiteral : Expression
 {
     public readonly bool Value;
 
@@ -158,15 +140,13 @@ public class BooleanLiteral : Expression
 
     public override Token Token { get; }
 
-    public override void ExpressionNode() { }
-
     public override string ToString()
     {
         return Token.Literal;
     }
 }
 
-public class StringLiteral : Expression
+public sealed class StringLiteral : Expression
 {
     public readonly string Value;
 
@@ -178,15 +158,13 @@ public class StringLiteral : Expression
 
     public override Token Token { get; }
 
-    public override void ExpressionNode() { }
-
     public override string ToString()
     {
         return Token.Literal;
     }
 }
 
-public class ArrayLiteral : Expression
+public sealed class ArrayLiteral : Expression
 {
     public readonly Expression[]? Elements;
 
@@ -198,8 +176,6 @@ public class ArrayLiteral : Expression
 
     public override Token Token { get; }
 
-    public override void ExpressionNode() { }
-
     public override string ToString()
     {
         if (Elements == null) return "[]";
@@ -209,7 +185,7 @@ public class ArrayLiteral : Expression
     }
 }
 
-public class HashLiteral : Expression
+public sealed class HashLiteral : Expression
 {
     public readonly Dictionary<Expression, Expression> Pairs;
 
@@ -221,8 +197,6 @@ public class HashLiteral : Expression
 
     public override Token Token { get; }
 
-    public override void ExpressionNode() { }
-
     public override string ToString()
     {
         var pairs = new List<string>();
@@ -231,7 +205,7 @@ public class HashLiteral : Expression
     }
 }
 
-public class FunctionLiteral : Expression
+public sealed class FunctionLiteral : Expression
 {
     public readonly BlockStatement Body;
     public readonly Identifier[] Parameters;
@@ -245,8 +219,6 @@ public class FunctionLiteral : Expression
 
     public override Token Token { get; }
 
-    public override void ExpressionNode() { }
-
     public override string ToString()
     {
         List<string> parameters = Parameters.Select(parameter => parameter.ToString()).ToList();
@@ -254,7 +226,7 @@ public class FunctionLiteral : Expression
     }
 }
 
-public class PrefixExpression : Expression
+public sealed class PrefixExpression : Expression
 {
     public readonly string Operator;
     public readonly Expression Right;
@@ -268,15 +240,13 @@ public class PrefixExpression : Expression
 
     public override Token Token { get; }
 
-    public override void ExpressionNode() { }
-
     public override string ToString()
     {
         return $"({Operator}{Right})";
     }
 }
 
-public class InfixExpression : Expression
+public sealed class InfixExpression : Expression
 {
     public readonly Expression Left;
     public readonly string Operator;
@@ -292,15 +262,13 @@ public class InfixExpression : Expression
 
     public override Token Token { get; }
 
-    public override void ExpressionNode() { }
-
     public override string ToString()
     {
         return $"({Left} {Operator} {Right})";
     }
 }
 
-public class IfExpression : Expression
+public sealed class IfExpression : Expression
 {
     public readonly BlockStatement? Alternative;
     public readonly Expression Condition;
@@ -316,8 +284,6 @@ public class IfExpression : Expression
 
     public override Token Token { get; }
 
-    public override void ExpressionNode() { }
-
     public override string ToString()
     {
         var output = string.Empty;
@@ -329,7 +295,7 @@ public class IfExpression : Expression
     }
 }
 
-public class IndexExpression : Expression
+public sealed class IndexExpression : Expression
 {
     public readonly Expression Index;
     public readonly Expression Left;
@@ -343,15 +309,13 @@ public class IndexExpression : Expression
 
     public override Token Token { get; }
 
-    public override void ExpressionNode() { }
-
     public override string ToString()
     {
         return $"({Left}[{Index}])";
     }
 }
 
-public class CallExpression : Expression
+public sealed class CallExpression : Expression
 {
     public readonly Expression[]? Arguments;
     public readonly Expression Function;
@@ -364,8 +328,6 @@ public class CallExpression : Expression
     }
 
     public override Token Token { get; }
-
-    public override void ExpressionNode() { }
 
     public override string ToString()
     {
