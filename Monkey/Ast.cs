@@ -166,9 +166,9 @@ public sealed class StringLiteral : Expression
 
 public sealed class ArrayLiteral : Expression
 {
-    public readonly Expression[]? Elements;
+    public readonly Expression[] Elements;
 
-    public ArrayLiteral(Token token, Expression[]? elements)
+    public ArrayLiteral(Token token, Expression[] elements)
     {
         Token = token;
         Elements = elements;
@@ -178,8 +178,6 @@ public sealed class ArrayLiteral : Expression
 
     public override string ToString()
     {
-        if (Elements == null) return "[]";
-
         List<string> elements = Elements.Select(element => element.ToString()).ToList();
         return $"[{string.Join(", ", elements)}]";
     }
@@ -317,10 +315,10 @@ public sealed class IndexExpression : Expression
 
 public sealed class CallExpression : Expression
 {
-    public readonly Expression[]? Arguments;
+    public readonly Expression[] Arguments;
     public readonly Expression Function;
 
-    public CallExpression(Token token, Expression function, Expression[]? arguments)
+    public CallExpression(Token token, Expression function, Expression[] arguments)
     {
         Token = token;
         Function = function;
@@ -331,8 +329,6 @@ public sealed class CallExpression : Expression
 
     public override string ToString()
     {
-        if (Arguments == null) return $"{Function} ()";
-
         List<string> arguments = Arguments.Select(argument => argument.ToString()).ToList();
         return $"{Function} ({string.Join(", ", arguments)})";
     }

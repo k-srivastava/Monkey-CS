@@ -2,7 +2,7 @@
 
 internal delegate Expression? PrefixParseFunction();
 
-internal delegate Expression InfixParseFunction(Expression expression);
+internal delegate Expression? InfixParseFunction(Expression expression);
 
 internal enum Precedence
 {
@@ -75,8 +75,6 @@ public class Parser
             { TokenType.LeftBracket, ParseIndexExpression }
         };
 
-        // NextToken();
-        // NextToken();
         _currentToken = _peekToken!;
         _peekToken = _lexer.NextToken();
 
@@ -342,7 +340,7 @@ public class Parser
         return !ExpectPeek(TokenType.RightParenthesis) ? null : expression;
     }
 
-    private Expression[]? ParseExpressionList(TokenType end)
+    private Expression[] ParseExpressionList(TokenType end)
     {
         var expressionList = new List<Expression>();
 
@@ -363,7 +361,7 @@ public class Parser
             expressionList.Add(ParseExpression(Precedence.Lowest)!);
         }
 
-        return ExpectPeek(end) ? expressionList.ToArray() : null;
+        return ExpectPeek(end) ? expressionList.ToArray() : System.Array.Empty<Expression>();
     }
 
     private void NextToken()

@@ -6,7 +6,7 @@ public static class Evaluator
     private static readonly Boolean False = new(false);
     public static readonly Null Null = new();
 
-    public static Object? Evaluate(Node? node, Environment environment)
+    public static Object Evaluate(Node? node, Environment environment)
     {
         switch (node)
         {
@@ -14,14 +14,14 @@ public static class Evaluator
                 return EvaluateProgram(program.Statements, environment);
 
             case LetStatement statement:
-                Object? letValue = Evaluate(statement.Value, environment);
+                Object letValue = Evaluate(statement.Value, environment);
                 if (IsError(letValue)) return letValue;
-                environment.Add(statement.Name.Value, letValue!);
+                environment.Add(statement.Name.Value, letValue);
 
                 break;
 
             case ReturnStatement statement:
-                Object? returnValue = Evaluate(statement.Value, environment);
+                Object returnValue = Evaluate(statement.Value, environment);
                 return IsError(returnValue) ? returnValue : new Return(returnValue);
 
             case ExpressionStatement statement:
@@ -43,7 +43,7 @@ public static class Evaluator
                 return new String(literal.Value);
 
             case ArrayLiteral literal:
-                Object?[] elements = EvaluateExpressions(literal.Elements, environment);
+                Object[] elements = EvaluateExpressions(literal.Elements, environment);
                 if (elements.Length == 1 && IsError(elements[0])) return elements[0];
                 return new Array(elements);
 
@@ -54,42 +54,42 @@ public static class Evaluator
                 return new Function(literal.Parameters, literal.Body, environment);
 
             case PrefixExpression expression:
-                Object? prefixRight = Evaluate(expression.Right, environment);
+                Object prefixRight = Evaluate(expression.Right, environment);
                 return IsError(prefixRight) ? prefixRight : EvaluatePrefixExpression(expression.Operator, prefixRight);
 
             case InfixExpression expression:
-                Object? infixLeft = Evaluate(expression.Left, environment);
+                Object infixLeft = Evaluate(expression.Left, environment);
                 if (IsError(infixLeft)) return infixLeft;
 
-                Object? infixRight = Evaluate(expression.Right, environment);
+                Object infixRight = Evaluate(expression.Right, environment);
                 return IsError(infixRight)
                     ? infixRight
-                    : EvaluateInfixExpression(expression.Operator, infixLeft!, infixRight!);
+                    : EvaluateInfixExpression(expression.Operator, infixLeft, infixRight);
 
             case IfExpression expression:
                 return EvaluateIfExpression(expression, environment);
 
             case IndexExpression expression:
-                Object? indexLeft = Evaluate(expression.Left, environment);
+                Object indexLeft = Evaluate(expression.Left, environment);
                 if (IsError(indexLeft)) return indexLeft;
 
-                Object? index = Evaluate(expression.Index, environment);
+                Object index = Evaluate(expression.Index, environment);
                 return IsError(index) ? index : EvaluateIndexExpression(indexLeft, index);
 
             case CallExpression expression:
-                Object? function = Evaluate(expression.Function, environment);
+                Object function = Evaluate(expression.Function, environment);
                 if (IsError(function)) return function;
 
-                Object?[] arguments = EvaluateExpressions(expression.Arguments, environment);
+                Object[] arguments = EvaluateExpressions(expression.Arguments, environment);
                 if (arguments.Length == 1 && IsError(arguments[0])) return arguments[0];
 
-                return ApplyFunction(function!, arguments!);
+                return ApplyFunction(function, arguments);
         }
 
-        return null;
+        return Null;
     }
 
-    private static Object? EvaluateProgram(IEnumerable<Statement> statements, Environment environment)
+    private static Object EvaluateProgram(IEnumerable<Statement> statements, Environment environment)
     {
         Object? result = null;
 
@@ -107,16 +107,16 @@ public static class Evaluator
             }
         }
 
-        return result;
+        return result ?? Null;
     }
 
-    private static Object? UnwrapReturnValue(Object? @object)
+    private static Object UnwrapReturnValue(Object @object)
     {
         if (@object is Return @return) return @return.Value;
         return @object;
     }
 
-    private static Object? EvaluateBlockStatement(IEnumerable<Statement> statements, Environment environment)
+    private static Object EvaluateBlockStatement(IEnumerable<Statement> statements, Environment environment)
     {
         Object? result = null;
 
@@ -126,7 +126,7 @@ public static class Evaluator
             if (result is { Type: ObjectType.ReturnValue or ObjectType.Error }) return result;
         }
 
-        return result;
+        return result ?? Null;
     }
 
     private static Object EvaluateIdentifier(Identifier node, Environment environment)
@@ -136,13 +136,13 @@ public static class Evaluator
         return new Error($"Identifier Not Found: {node.Value}");
     }
 
-    private static Object?[] EvaluateExpressions(IEnumerable<Expression> expressions, Environment environment)
+    private static Object[] EvaluateExpressions(IEnumerable<Expression> expressions, Environment environment)
     {
-        var result = new List<Object?>();
+        var result = new List<Object>();
 
         foreach (Expression expression in expressions)
         {
-            Object? evaluated = Evaluate(expression, environment);
+            Object evaluated = Evaluate(expression, environment);
             if (IsError(evaluated)) return new[] { evaluated };
             result.Add(evaluated);
         }
@@ -156,12 +156,12 @@ public static class Evaluator
 
         foreach ((Expression nodeKey, Expression nodeValue) in node.Pairs)
         {
-            Object key = Evaluate(nodeKey, environment)!;
+            Object key = Evaluate(nodeKey, environment);
             if (IsError(key)) return key;
 
             if (key is not IHashable hashKey) return new Error($"Invalid Hash Key: {key.Type}.");
 
-            Object value = Evaluate(nodeValue, environment)!;
+            Object value = Evaluate(nodeValue, environment);
             if (IsError(value)) return value;
 
             HashKey hashed = hashKey.HashKey();
@@ -171,14 +171,14 @@ public static class Evaluator
         return new Hash(pairs);
     }
 
-    private static Object? ApplyFunction(Object function, Object[] arguments)
+    private static Object ApplyFunction(Object function, Object[] arguments)
     {
         switch (function)
         {
             case Function functionObject:
             {
                 Environment extendedEnvironment = ExtendFunctionEnvironment(functionObject, arguments);
-                Object? evaluated = Evaluate(functionObject.Body, extendedEnvironment);
+                Object evaluated = Evaluate(functionObject.Body, extendedEnvironment);
                 return UnwrapReturnValue(evaluated);
             }
 
@@ -228,9 +228,9 @@ public static class Evaluator
         };
     }
 
-    private static Object? EvaluateIfExpression(IfExpression expression, Environment environment)
+    private static Object EvaluateIfExpression(IfExpression expression, Environment environment)
     {
-        Object? condition = Evaluate(expression.Condition, environment);
+        Object condition = Evaluate(expression.Condition, environment);
         if (IsError(condition)) return condition;
 
         if (IsTruthy(condition)) return Evaluate(expression.Consequence, environment);
@@ -310,7 +310,7 @@ public static class Evaluator
         return input ? True : False;
     }
 
-    private static bool IsTruthy(Object? @object)
+    private static bool IsTruthy(Object @object)
     {
         if (@object == Null) return false;
         if (@object == True) return true;

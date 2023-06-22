@@ -49,9 +49,9 @@ public class Error : Object
 
 public class Return : Object
 {
-    public readonly Object? Value;
+    public readonly Object Value;
 
-    public Return(Object? value)
+    public Return(Object value)
     {
         Value = value;
     }
@@ -60,7 +60,7 @@ public class Return : Object
 
     public override string Inspect()
     {
-        return Value?.Inspect() ?? string.Empty;
+        return Value.Inspect();
     }
 }
 

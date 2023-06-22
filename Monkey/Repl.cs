@@ -33,8 +33,8 @@ public static class Repl
                 continue;
             }
 
-            Object? evaluated = Evaluator.Evaluate(program, environment);
-            if (evaluated != null) Console.WriteLine(evaluated.Inspect());
+            Object evaluated = Evaluator.Evaluate(program, environment);
+            Console.WriteLine(evaluated.Inspect());
         }
     }
 
