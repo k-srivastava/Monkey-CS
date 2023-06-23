@@ -171,7 +171,7 @@ public static class Evaluator
         return new Hash(pairs);
     }
 
-    private static Object ApplyFunction(Object function, Object[] arguments)
+    public static Object ApplyFunction(Object function, Object[] arguments)
     {
         switch (function)
         {
