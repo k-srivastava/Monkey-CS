@@ -42,11 +42,35 @@ public static class Builtins
         if (arguments.Length != 1)
             return new Error($"Builtin function 'first' accepts only 1 argument, got {arguments.Length}.");
 
-        if (arguments[0].Type != ObjectType.Array)
-            return new Error($"Builtin function 'first' is only supported for Arrays, not {arguments[0].Type}.");
+        switch (arguments[0].Type)
+        {
+            case ObjectType.String:
+            {
+                var @string = (String)arguments[0];
+                return @string.Value.Length > 0 ? new String(@string.Value[0].ToString()) : Evaluator.Null;
+            }
 
-        var array = (arguments[0] as Array)!;
-        return array.Elements.Length > 0 ? array.Elements[0] : Evaluator.Null;
+            case ObjectType.Array:
+            {
+                var array = (Array)arguments[0];
+                return array.Elements.Length > 0 ? array.Elements[0] : Evaluator.Null;
+            }
+
+            case ObjectType.Error:
+            case ObjectType.ReturnValue:
+            case ObjectType.Integer:
+            case ObjectType.Boolean:
+            case ObjectType.Hash:
+            case ObjectType.Builtin:
+            case ObjectType.Function:
+            case ObjectType.Null:
+            default:
+            {
+                return new Error(
+                    $"Builtin function 'first' is only supported for Strings and Arrays, not {arguments[0].Type}."
+                );
+            }
+        }
     }
 
     private static Object LastFunction(params Object[] arguments)
@@ -54,11 +78,35 @@ public static class Builtins
         if (arguments.Length != 1)
             return new Error($"Builtin function 'last' accepts only 1 argument, got {arguments.Length}.");
 
-        if (arguments[0].Type != ObjectType.Array)
-            return new Error($"Builtin function 'last' is only supported for Arrays, not {arguments[0].Type}.");
+        switch (arguments[0].Type)
+        {
+            case ObjectType.String:
+            {
+                var @string = (String)arguments[0];
+                return @string.Value.Length > 0 ? new String(@string.Value[^1].ToString()) : Evaluator.Null;
+            }
 
-        var array = (arguments[0] as Array)!;
-        return array.Elements.Length > 0 ? array.Elements[^1] : Evaluator.Null;
+            case ObjectType.Array:
+            {
+                var array = (Array)arguments[0];
+                return array.Elements.Length > 0 ? array.Elements[^1] : Evaluator.Null;
+            }
+
+            case ObjectType.Error:
+            case ObjectType.ReturnValue:
+            case ObjectType.Integer:
+            case ObjectType.Boolean:
+            case ObjectType.Hash:
+            case ObjectType.Builtin:
+            case ObjectType.Function:
+            case ObjectType.Null:
+            default:
+            {
+                return new Error(
+                    $"Builtin function 'last' is only supported for Strings and Arrays, not {arguments[0].Type}."
+                );
+            }
+        }
     }
 
     private static Object RestFunction(params Object[] arguments)
@@ -66,20 +114,53 @@ public static class Builtins
         if (arguments.Length != 1)
             return new Error($"Builtin function 'rest' accepts only 1 argument, got {arguments.Length}.");
 
-        if (arguments[0].Type != ObjectType.Array)
-            return new Error($"Builtin function 'rest' is only supported for Arrays, not {arguments[0].Type}.");
-
-        var array = (arguments[0] as Array)!;
-        int length = array.Elements.Length;
-
-        if (length > 0)
+        switch (arguments[0].Type)
         {
-            var newElements = new Object[length - 1];
-            for (var i = 1; i < length; i++) newElements[i - 1] = array.Elements[i];
-            return new Array(newElements);
-        }
+            case ObjectType.String:
+            {
+                var @string = (String)arguments[0];
+                int length = @string.Value.Length;
 
-        return Evaluator.Null;
+                if (length > 0)
+                {
+                    var newString = string.Empty;
+                    for (var i = 1; i < length; i++) newString += @string.Value[i];
+                    return new String(newString);
+                }
+
+                return Evaluator.Null;
+            }
+
+            case ObjectType.Array:
+            {
+                var array = (Array)arguments[0];
+                int length = array.Elements.Length;
+
+                if (length > 0)
+                {
+                    var newElements = new Object[length - 1];
+                    for (var i = 1; i < length; i++) newElements[i - 1] = array.Elements[i];
+                    return new Array(newElements);
+                }
+
+                return Evaluator.Null;
+            }
+
+            case ObjectType.Error:
+            case ObjectType.ReturnValue:
+            case ObjectType.Integer:
+            case ObjectType.Boolean:
+            case ObjectType.Hash:
+            case ObjectType.Builtin:
+            case ObjectType.Function:
+            case ObjectType.Null:
+            default:
+            {
+                return new Error(
+                    $"Builtin function 'rest' is only supported for Strings and Arrays, not {arguments[0].Type}."
+                );
+            }
+        }
     }
 
     private static Object PushFunction(params Object[] arguments)
