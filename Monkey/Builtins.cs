@@ -12,7 +12,9 @@ public static class Builtins
         { "push", new Builtin(PushFunction) },
         { "map", new Builtin(MapFunction) },
         { "reduce", new Builtin(ReduceFunction) },
-        { "sum", new Builtin(SumFunction) }
+        { "sum", new Builtin(SumFunction) },
+        { "stringOf", new Builtin(StringOfFunction) },
+        { "arrayOf", new Builtin(ArrayOfFunction) }
     };
 
     private static Object PutsFunction(params Object[] arguments)
@@ -288,7 +290,7 @@ public static class Builtins
     private static Object SumFunction(params Object[] arguments)
     {
         if (arguments.Length != 1)
-            return new Error($"Builtin function 'sum' accepts only 1 arguments, got {arguments.Length}.");
+            return new Error($"Builtin function 'sum' accepts only 1 argument, got {arguments.Length}.");
 
         if (arguments[0].Type != ObjectType.Array)
             return new Error($"Builtin function 'sum' can only sum Arrays, not {arguments[0].Type}.");
@@ -308,5 +310,65 @@ public static class Builtins
         }
 
         return new Integer(sum);
+    }
+
+    private static Object StringOfFunction(params Object[] arguments)
+    {
+        if (arguments.Length != 1)
+            return new Error($"Builtin function 'stringOf' accepts only 1 argument, got {arguments.Length}");
+
+        return new String(arguments[0].Inspect());
+    }
+
+    private static Object ArrayOfFunction(params Object[] arguments)
+    {
+        if (arguments.Length != 1)
+            return new Error($"Builtin function 'arrayOf' accepts only 1 argument, got {arguments.Length}");
+
+        switch (arguments[0].Type)
+        {
+            case ObjectType.Integer:
+            {
+                var number = ((Integer)arguments[0]).Value.ToString();
+                var digits = new Object[number.Length];
+
+                for (var i = 0; i < number.Length; i++)
+                {
+                    digits[i] = new String(number[i]);
+                }
+
+                return new Array(digits);
+            }
+
+            case ObjectType.Boolean:
+                return new Array(new Object[] { (Boolean)arguments[0] });
+
+            case ObjectType.String:
+            {
+                string data = ((String)arguments[0]).Value;
+                var chars = new Object[data.Length];
+
+                for (var i = 0; i < data.Length; i++)
+                {
+                    chars[i] = new String(data[i]);
+                }
+
+                return new Array(chars);
+            }
+
+            case ObjectType.Error:
+            case ObjectType.ReturnValue:
+            case ObjectType.Array:
+            case ObjectType.Hash:
+            case ObjectType.Builtin:
+            case ObjectType.Function:
+            case ObjectType.Null:
+            default:
+            {
+                return new Error(
+                    $"Builtin function 'arrayOf' can only convert Integers, Boolean and Strings, not {arguments[0].Type}."
+                );
+            }
+        }
     }
 }

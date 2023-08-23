@@ -125,6 +125,11 @@ public class String : Object, IHashable
         Value = value;
     }
 
+    public String(char value)
+    {
+        Value = value.ToString();
+    }
+
     public override ObjectType Type => ObjectType.String;
 
     #region IHashable Members
