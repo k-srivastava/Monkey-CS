@@ -25,6 +25,7 @@ public static class Evaluator
                 return IsError(returnValue) ? returnValue : new Return(returnValue);
 
             case ExpressionStatement statement:
+                // ReSharper disable once TailRecursiveCall
                 return Evaluate(statement.Expression, environment);
 
             case BlockStatement statement:

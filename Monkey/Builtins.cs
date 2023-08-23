@@ -167,32 +167,6 @@ public static class Builtins
 
     private static Object PushFunction(params Object[] arguments)
     {
-        Object PushArrayFunction(Array array, Object value)
-        {
-            var newElements = new Object[array.Elements.Length + 1];
-            array.Elements.CopyTo(newElements, 0);
-            newElements[^1] = value;
-
-            return new Array(newElements);
-        }
-
-        Object PushHashFunction(Hash hash, Object key, Object value)
-        {
-            var newPairs = new Dictionary<HashKey, HashPair>();
-
-            if (key is not IHashable hashableKey)
-            {
-                return new Error(
-                    $"Builtin function 'push' for Hashes accepts only IHashable key types like Boolean, Integer and String, not {key.Type}."
-                );
-            }
-
-            foreach ((HashKey hashKey, HashPair hashPair) in hash.Pairs) newPairs.Add(hashKey, hashPair);
-            newPairs.Add(hashableKey.HashKey(), new HashPair(key, value));
-
-            return new Hash(newPairs);
-        }
-
         if (arguments.Length is not (2 or 3))
             return new Error($"Builtin function 'push' accepts only 2 or 3 arguments, got {arguments.Length}.");
 
@@ -212,6 +186,32 @@ public static class Builtins
 
             _ => new Error($"Builtin function 'rest' is only supported for Arrays and Hashes, not {arguments[0].Type}.")
         };
+
+        Object PushHashFunction(Hash hash, Object key, Object value)
+        {
+            var newPairs = new Dictionary<HashKey, HashPair>();
+
+            if (key is not IHashable hashableKey)
+            {
+                return new Error(
+                    $"Builtin function 'push' for Hashes accepts only IHashable key types like Boolean, Integer and String, not {key.Type}."
+                );
+            }
+
+            foreach ((HashKey hashKey, HashPair hashPair) in hash.Pairs) newPairs.Add(hashKey, hashPair);
+            newPairs.Add(hashableKey.HashKey(), new HashPair(key, value));
+
+            return new Hash(newPairs);
+        }
+
+        Object PushArrayFunction(Array array, Object value)
+        {
+            var newElements = new Object[array.Elements.Length + 1];
+            array.Elements.CopyTo(newElements, 0);
+            newElements[^1] = value;
+
+            return new Array(newElements);
+        }
     }
 
     private static Object MapFunction(params Object[] arguments)
