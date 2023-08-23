@@ -5,6 +5,7 @@ public static class Builtins
     public static readonly Dictionary<string, Builtin> BuiltinsMap = new()
     {
         { "puts", new Builtin(PutsFunction) },
+        { "quit", new Builtin(QuitFunction) },
         { "len", new Builtin(LenFunction) },
         { "first", new Builtin(FirstFunction) },
         { "last", new Builtin(LastFunction) },
@@ -21,6 +22,17 @@ public static class Builtins
     {
         foreach (Object @object in arguments) Console.WriteLine(@object.Inspect());
         return Evaluator.Null;
+    }
+
+    private static Object QuitFunction(params Object[] arguments)
+    {
+        if (arguments.Length != 0)
+            return new Error($"Builtin function 'quit' accepts no arguments, got {arguments.Length}.");
+
+        Console.WriteLine("Quitting MonkeyCS.");
+        System.Environment.Exit(0);
+
+        return new Null();
     }
 
     private static Object LenFunction(params Object[] arguments)
