@@ -346,7 +346,7 @@ public static class Builtins
 
                 for (var i = 0; i < number.Length; i++)
                 {
-                    digits[i] = new String(number[i]);
+                    digits[i] = new Integer(int.Parse(number[i].ToString()));
                 }
 
                 return new Array(digits);
